@@ -1,6 +1,8 @@
 ﻿Imports System.IO
 
 Public Class FrmMain
+
+
 #Region "共有変数"
     Private filePath As String
     Private rootPath As String

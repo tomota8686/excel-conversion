@@ -29,6 +29,8 @@ Partial Class FrmMain
         Me.btnFolderSelect = New System.Windows.Forms.Button()
         Me.FolderBrowserDialog1 = New System.Windows.Forms.FolderBrowserDialog()
         Me.lblFilePath = New System.Windows.Forms.Label()
+        Me.btnAllChk = New System.Windows.Forms.Button()
+        Me.btnAllCancel = New System.Windows.Forms.Button()
         CType(Me.dgvBefo, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DataGridView2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -97,11 +99,31 @@ Partial Class FrmMain
         Me.lblFilePath.Size = New System.Drawing.Size(395, 23)
         Me.lblFilePath.TabIndex = 6
         '
+        'btnAllChk
+        '
+        Me.btnAllChk.Location = New System.Drawing.Point(335, 87)
+        Me.btnAllChk.Name = "btnAllChk"
+        Me.btnAllChk.Size = New System.Drawing.Size(88, 31)
+        Me.btnAllChk.TabIndex = 7
+        Me.btnAllChk.Text = "すべて選択"
+        Me.btnAllChk.UseVisualStyleBackColor = True
+        '
+        'btnAllCancel
+        '
+        Me.btnAllCancel.Location = New System.Drawing.Point(429, 87)
+        Me.btnAllCancel.Name = "btnAllCancel"
+        Me.btnAllCancel.Size = New System.Drawing.Size(88, 31)
+        Me.btnAllCancel.TabIndex = 8
+        Me.btnAllCancel.Text = "すべて解除"
+        Me.btnAllCancel.UseVisualStyleBackColor = True
+        '
         'FrmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1264, 711)
+        Me.Controls.Add(Me.btnAllCancel)
+        Me.Controls.Add(Me.btnAllChk)
         Me.Controls.Add(Me.lblFilePath)
         Me.Controls.Add(Me.btnFolderSelect)
         Me.Controls.Add(Me.btnConv)
@@ -127,4 +149,6 @@ Partial Class FrmMain
     Friend WithEvents btnFolderSelect As Button
     Friend WithEvents FolderBrowserDialog1 As FolderBrowserDialog
     Friend WithEvents lblFilePath As Label
+    Friend WithEvents btnAllChk As Button
+    Friend WithEvents btnAllCancel As Button
 End Class

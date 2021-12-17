@@ -1,11 +1,12 @@
 ﻿Imports System.IO
+Imports WK.Libraries.BetterFolderBrowserNS
 
 Public Class FrmMain
 
 
 #Region "共有変数"
-    Private filePath As String
-    Private rootPath As String
+    Private INPUTPath As String
+    Private OUTPUTPath As String
 #End Region
     'コンストラクタ
     Sub New()
@@ -49,8 +50,8 @@ Public Class FrmMain
 
 
             'フォルダ選択のRoot設定
-            rootPath = INI.GetIniString("ROOTFOLDER", "PATH")
-
+            INPUTPath = INI.GetIniString("ROOTFOLDER", "INPUTPATH")
+            OUTPUTPath = INI.GetIniString("ROOTFOLDER", "OUTPUTPATH")
 
 
         Catch ex As Exception
@@ -64,25 +65,31 @@ Public Class FrmMain
 
         Try
 
-            FolderBrowserDialog1.SelectedPath = rootPath
-            FolderBrowserDialog1.ShowNewFolderButton = False
+            Dim bfb As New BetterFolderBrowser()
+            Dim filePath As String()
+
+            bfb.Title = "変換したいフォルダを選択してください。"
+            bfb.Multiselect = False
+            bfb.RootFolder = INPUTPath
 
             'フォルダ選択画面を表示し
             'ＯＫが押された時に、TextBoxへ選択フォルダのPathを表示
-            If FolderBrowserDialog1.ShowDialog() = DialogResult.OK Then
-                filePath = FolderBrowserDialog1.SelectedPath
-                lblFilePath.Text = filePath
+            If bfb.ShowDialog() = DialogResult.OK Then
+                filePath = bfb.SelectedFolders
+                lblFilePath.Text = String.Join(",", filePath)
             Else
                 Return False
             End If
 
             'TextBoxへ指定したディレクトリが存在するかのチェック
-            If Not Directory.Exists(filePath) Then
-                MsgBox("指定のディレクトリは存在しません。")
-                Return False
-            End If
+            For Each fp As String In filePath
+                If Not Directory.Exists(fp) Then
+                    MsgBox($"指定のディレクトリ{fp}は存在しません。" & vbCrLf & "確認してください。")
+                Else
+                    Call FunSetListData(Me.dgvBefo, fp)
+                End If
+            Next
 
-            Call FunSetListData(Me.dgvBefo)
 
         Catch ex As Exception
             MsgBox(ex.Message)
@@ -91,37 +98,49 @@ Public Class FrmMain
 
 
     End Function
+
 #Region "DataGridView関連"
     'DataGridView列作成
     Private Function FunSetDgvCulumns(dgv As DataGridView) As Boolean
 
         With dgv
 
-            dgv.ColumnHeadersHeight = 30
-            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.Gray
-            dgv.ColumnHeadersHeightSizeMode = False
-            dgv.RowHeadersWidthSizeMode = False
-            dgv.RowTemplate.Height = 30
+            .EnableHeadersVisualStyles = False
+            .ColumnHeadersHeight = 40
+            .ColumnHeadersDefaultCellStyle.BackColor = Color.Gray
+            .ColumnHeadersHeightSizeMode = False
+            .RowHeadersWidthSizeMode = False
+            .RowTemplate.Height = 30
 
             Dim checkBox As New DataGridViewCheckBoxColumn
+
+            'CheckBox列作成
             .Columns.Add(checkBox)
             .Columns(0).HeaderText = "選択"
             .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
             .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
             .Columns(.ColumnCount - 1).Width = 40
 
+            'ファイル名列作成
             .Columns.Add("fileName", "ファイル名")
             .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
             .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
             .Columns(.ColumnCount - 1).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
 
+            '読み取り専用
+            .Columns(1).ReadOnly = True
+
+            'ソート禁止
+            For Each c As DataGridViewColumn In dgv.Columns
+                c.SortMode = DataGridViewColumnSortMode.NotSortable
+            Next c
 
         End With
 
     End Function
 
     'DataGridView出力
-    Private Function FunSetListData(dgv As DataGridView) As Boolean
+    Private Function FunSetListData(dgv As DataGridView, filePath As String) As Boolean
         Try
             Dim dt As New DataTable
             Dim files As String()
@@ -133,11 +152,19 @@ Public Class FrmMain
             For Each filename As String In files
                 Dim fi As New FileInfo(filename)
                 Dim dr As DataRow = dt.NewRow()
-                dr("fileName") = fi.Name
-                dt.Rows.Add(dr)
+
+                'Excelファイルのみ表示
+                If (fi.Extension Like ".xl*") Then
+                    dr("fileName") = fi.Name
+                    dt.Rows.Add(dr)
+                End If
+
             Next
 
             dgv.DataSource = dt
+
+            'すべてのチェックボックスを選択状態にする
+            Call FunDgvCellAllChk(dgv)
 
             Return True
 
@@ -147,6 +174,60 @@ Public Class FrmMain
         End Try
 
     End Function
+
+    'すべてのChkBox選択
+    Private Function FunDgvCellAllChk(dgv As DataGridView) As Boolean
+
+        Dim dgvRowCnt As Integer
+
+        Try
+
+            dgvRowCnt = dgv.Rows.Count
+
+            For i As Integer = 0 To dgvRowCnt - 1
+                dgv(0, i).Value = True
+            Next i
+
+            Return True
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+            Return False
+        End Try
+
+    End Function
+
+    Private Function FunDgvCellAllCan(dgv As DataGridView) As Boolean
+
+        Dim dgvRowCnt As Integer
+
+        Try
+
+            dgvRowCnt = dgv.Rows.Count
+
+            For i As Integer = 0 To dgvRowCnt - 1
+                dgv(0, i).Value = False
+            Next i
+
+            Return True
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+            Return False
+        End Try
+
+    End Function
+
+    '全選択ボタン押下
+    Private Sub btnAllChk_Click(sender As Object, e As EventArgs) Handles btnAllChk.Click
+        Call FunDgvCellAllChk(Me.dgvBefo)
+    End Sub
+
+    '全解除ボタン押下
+    Private Sub btnAllCancel_Click(sender As Object, e As EventArgs) Handles btnAllCancel.Click
+        Call FunDgvCellAllCan(Me.dgvBefo)
+    End Sub
+
 #End Region
 
 End Class

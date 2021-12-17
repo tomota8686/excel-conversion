@@ -38,21 +38,19 @@ Public Class FrmMain
             '<System.IO.FileNotFoundExceptionでも記述できる>
             'SYSTEM.INIが見つからない場合
             If System.IO.File.Exists(strPath) <> True Then
-                MsgBox("SYSTEM.INIが見つかりません。" & vbCrLf & "プログラムを終了します。",, "エラー")
-                Try
-                Finally
-                    Application.Exit()
-                End Try
+                MsgBox("SYSTEM.INIが見つかりません。" & vbCrLf & "デフォルトにデスクトップPathを指定します。",, "エラー")
+                'フォルダ選択のRoot設定
+                INPUTPath = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+                OUTPUTPath = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+            Else
+                'インスタンス生成
+                Dim INI As New RWini(strPath)
+
+
+                'フォルダ選択のRoot設定
+                INPUTPath = INI.GetIniString("ROOTFOLDER", "INPUTPATH")
+                OUTPUTPath = INI.GetIniString("ROOTFOLDER", "OUTPUTPATH")
             End If
-
-            'インスタンス生成
-            Dim INI As New RWini(strPath)
-
-
-            'フォルダ選択のRoot設定
-            INPUTPath = INI.GetIniString("ROOTFOLDER", "INPUTPATH")
-            OUTPUTPath = INI.GetIniString("ROOTFOLDER", "OUTPUTPATH")
-
 
         Catch ex As Exception
             MsgBox(ex.Message)
@@ -67,6 +65,11 @@ Public Class FrmMain
 
             Dim bfb As New BetterFolderBrowser()
             Dim filePath As String()
+
+            If System.IO.File.Exists(INPUTPath) <> True Then
+                MsgBox($"{INPUTPath}が見つかりません。" & vbCrLf & "デスクトップフォルダを開きます。",, "エラー")
+                INPUTPath = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+            End If
 
             bfb.Title = "変換したいフォルダを選択してください。"
             bfb.Multiselect = False

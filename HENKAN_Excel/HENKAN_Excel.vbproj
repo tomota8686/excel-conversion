@@ -95,6 +95,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FrmLoad.Designer.vb">
+      <DependentUpon>FrmLoad.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FrmLoad.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="RWini.vb" />
     <Compile Include="FrmMain.vb">
       <SubType>Form</SubType>
@@ -121,6 +127,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="FrmLoad.resx">
+      <DependentUpon>FrmLoad.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmMain.resx">
       <DependentUpon>FrmMain.vb</DependentUpon>
     </EmbeddedResource>

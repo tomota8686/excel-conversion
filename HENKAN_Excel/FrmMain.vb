@@ -130,6 +130,8 @@ Public Class FrmMain
             '読み取り専用
             .Columns(1).ReadOnly = True
 
+            .Columns(0).AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells
+
             'ソート禁止
             For Each c As DataGridViewColumn In dgv.Columns
                 c.SortMode = DataGridViewColumnSortMode.NotSortable
@@ -161,7 +163,11 @@ Public Class FrmMain
 
             Next
 
+            'データソース設定
             dgv.DataSource = dt
+
+            '件数表示
+            lblCnt.Text = dgv.Rows.Count.ToString + "件"
 
             'すべてのチェックボックスを選択状態にする
             Call FunDgvCellAllChk(dgv)
@@ -217,6 +223,29 @@ Public Class FrmMain
         End Try
 
     End Function
+
+    Private Sub cellChanged(sender As Object, e As EventArgs) Handles dgvBefo.CellValueChanged
+        Dim dgvRowCnt As Integer
+        Dim cnt As Integer
+
+        Try
+
+            dgvRowCnt = dgvBefo.Rows.Count
+
+            For i As Integer = 0 To dgvRowCnt - 1
+
+                If dgvBefo(0, i).Value = True Then
+                    cnt += 1
+                End If
+
+            Next i
+
+            lblCnt.Text = cnt.ToString + "件"
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+    End Sub
 
     '全選択ボタン押下
     Private Sub btnAllChk_Click(sender As Object, e As EventArgs) Handles btnAllChk.Click

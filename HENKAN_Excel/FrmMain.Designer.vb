@@ -27,10 +27,12 @@ Partial Class FrmMain
         Me.DataGridView2 = New System.Windows.Forms.DataGridView()
         Me.btnConv = New System.Windows.Forms.Button()
         Me.btnFolderSelect = New System.Windows.Forms.Button()
-        Me.FolderBrowserDialog1 = New System.Windows.Forms.FolderBrowserDialog()
         Me.lblFilePath = New System.Windows.Forms.Label()
         Me.btnAllChk = New System.Windows.Forms.Button()
         Me.btnAllCancel = New System.Windows.Forms.Button()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.lblCnt = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
         CType(Me.dgvBefo, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DataGridView2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -71,17 +73,18 @@ Partial Class FrmMain
         'btnConv
         '
         Me.btnConv.Font = New System.Drawing.Font("MS UI Gothic", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
-        Me.btnConv.Location = New System.Drawing.Point(572, 399)
+        Me.btnConv.Location = New System.Drawing.Point(553, 183)
         Me.btnConv.Name = "btnConv"
-        Me.btnConv.Size = New System.Drawing.Size(121, 66)
+        Me.btnConv.Size = New System.Drawing.Size(157, 85)
         Me.btnConv.TabIndex = 3
         Me.btnConv.Text = "変換"
         Me.btnConv.UseVisualStyleBackColor = True
         '
         'btnFolderSelect
         '
-        Me.btnFolderSelect.BackColor = System.Drawing.Color.Yellow
+        Me.btnFolderSelect.BackColor = System.Drawing.Color.Aqua
         Me.btnFolderSelect.Font = New System.Drawing.Font("MS UI Gothic", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.btnFolderSelect.ForeColor = System.Drawing.SystemColors.ControlText
         Me.btnFolderSelect.Location = New System.Drawing.Point(12, 43)
         Me.btnFolderSelect.Name = "btnFolderSelect"
         Me.btnFolderSelect.Size = New System.Drawing.Size(130, 33)
@@ -117,11 +120,41 @@ Partial Class FrmMain
         Me.btnAllCancel.Text = "すべて解除"
         Me.btnAllCancel.UseVisualStyleBackColor = True
         '
+        'Label1
+        '
+        Me.Label1.Font = New System.Drawing.Font("MS UI Gothic", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.Label1.Location = New System.Drawing.Point(549, 95)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(123, 23)
+        Me.Label1.TabIndex = 9
+        Me.Label1.Text = "処理件数："
+        '
+        'lblCnt
+        '
+        Me.lblCnt.Font = New System.Drawing.Font("MS UI Gothic", 27.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.lblCnt.Location = New System.Drawing.Point(593, 118)
+        Me.lblCnt.Name = "lblCnt"
+        Me.lblCnt.Size = New System.Drawing.Size(117, 48)
+        Me.lblCnt.TabIndex = 10
+        '
+        'Label2
+        '
+        Me.Label2.Font = New System.Drawing.Font("MS UI Gothic", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.Label2.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label2.Location = New System.Drawing.Point(721, 56)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(125, 23)
+        Me.Label2.TabIndex = 11
+        Me.Label2.Text = "<出力結果>"
+        '
         'FrmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1264, 711)
+        Me.Controls.Add(Me.Label2)
+        Me.Controls.Add(Me.lblCnt)
+        Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnAllCancel)
         Me.Controls.Add(Me.btnAllChk)
         Me.Controls.Add(Me.lblFilePath)
@@ -147,8 +180,10 @@ Partial Class FrmMain
     Friend WithEvents DataGridView2 As DataGridView
     Friend WithEvents btnConv As Button
     Friend WithEvents btnFolderSelect As Button
-    Friend WithEvents FolderBrowserDialog1 As FolderBrowserDialog
     Friend WithEvents lblFilePath As Label
     Friend WithEvents btnAllChk As Button
     Friend WithEvents btnAllCancel As Button
+    Friend WithEvents Label1 As Label
+    Friend WithEvents lblCnt As Label
+    Friend WithEvents Label2 As Label
 End Class

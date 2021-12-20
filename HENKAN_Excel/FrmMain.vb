@@ -106,41 +106,49 @@ Public Class FrmMain
     'DataGridView列作成
     Private Function FunSetDgvCulumns(dgv As DataGridView) As Boolean
 
-        With dgv
+        Try
+            With dgv
 
-            .EnableHeadersVisualStyles = False
-            .ColumnHeadersHeight = 40
-            .ColumnHeadersDefaultCellStyle.BackColor = Color.Gray
-            .ColumnHeadersHeightSizeMode = False
-            .RowHeadersWidthSizeMode = False
-            .RowTemplate.Height = 30
+                .EnableHeadersVisualStyles = False
+                .ColumnHeadersHeight = 40
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.Gray
+                .ColumnHeadersHeightSizeMode = False
+                .RowHeadersWidthSizeMode = False
+                .RowTemplate.Height = 30
 
-            Dim checkBox As New DataGridViewCheckBoxColumn
+                Dim checkBox As New DataGridViewCheckBoxColumn
 
-            'CheckBox列作成
-            .Columns.Add(checkBox)
-            .Columns(0).HeaderText = "選択"
-            .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-            .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
-            .Columns(.ColumnCount - 1).Width = 40
+                'CheckBox列作成
+                .Columns.Add(checkBox)
+                .Columns(0).HeaderText = "選択"
+                .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+                .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
+                .Columns(.ColumnCount - 1).Width = 40
 
-            'ファイル名列作成
-            .Columns.Add("fileName", "ファイル名")
-            .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-            .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
-            .Columns(.ColumnCount - 1).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                'ファイル名列作成
+                .Columns.Add("fileName", "ファイル名")
+                .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+                .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
+                .Columns(.ColumnCount - 1).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
 
-            '読み取り専用
-            .Columns(1).ReadOnly = True
+                '読み取り専用
+                .Columns(1).ReadOnly = True
 
-            .Columns(0).AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells
+                .Columns(0).AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells
 
-            'ソート禁止
-            For Each c As DataGridViewColumn In dgv.Columns
-                c.SortMode = DataGridViewColumnSortMode.NotSortable
-            Next c
+                'ソート禁止
+                For Each c As DataGridViewColumn In dgv.Columns
+                    c.SortMode = DataGridViewColumnSortMode.NotSortable
+                Next c
 
-        End With
+            End With
+
+            Return True
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+            Return False
+        End Try
 
     End Function
 
@@ -206,6 +214,7 @@ Public Class FrmMain
 
     End Function
 
+    'すべてのChkBox選択解除
     Private Function FunDgvCellAllCan(dgv As DataGridView) As Boolean
 
         Dim dgvRowCnt As Integer
@@ -227,7 +236,7 @@ Public Class FrmMain
 
     End Function
 
-    Private Sub cellChanged(sender As Object, e As EventArgs) Handles dgvBefo.CellValueChanged
+    Private Sub cellChanged(sender As Object, e As EventArgs) Handles dgvBefo.CurrentCellDirtyStateChanged
         Dim dgvRowCnt As Integer
         Dim cnt As Integer
 
@@ -244,6 +253,7 @@ Public Class FrmMain
             Next i
 
             lblCnt.Text = cnt.ToString + "件"
+            'dgvBefo.CurrentCell = dgvBefo(, 1)
 
         Catch ex As Exception
             MsgBox(ex.Message)

@@ -95,6 +95,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Excel_Processing.vb" />
     <Compile Include="FrmLoad.Designer.vb">
       <DependentUpon>FrmLoad.vb</DependentUpon>
     </Compile>

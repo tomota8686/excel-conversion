@@ -22,9 +22,9 @@ Partial Class FrmMain
     'コード エディターを使って変更しないでください。
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.lblTitle = New System.Windows.Forms.Label()
         Me.dgvBefo = New System.Windows.Forms.DataGridView()
-        Me.DataGridView2 = New System.Windows.Forms.DataGridView()
         Me.btnConv = New System.Windows.Forms.Button()
         Me.btnFolderSelect = New System.Windows.Forms.Button()
         Me.lblFilePath = New System.Windows.Forms.Label()
@@ -32,9 +32,7 @@ Partial Class FrmMain
         Me.btnAllCancel = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
         Me.lblCnt = New System.Windows.Forms.Label()
-        Me.Label2 = New System.Windows.Forms.Label()
         CType(Me.dgvBefo, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.DataGridView2, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'lblTitle
@@ -54,6 +52,14 @@ Partial Class FrmMain
         Me.dgvBefo.AllowUserToResizeColumns = False
         Me.dgvBefo.AllowUserToResizeRows = False
         Me.dgvBefo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("MS UI Gothic", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Transparent
+        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvBefo.DefaultCellStyle = DataGridViewCellStyle2
         Me.dgvBefo.Location = New System.Drawing.Point(12, 82)
         Me.dgvBefo.Name = "dgvBefo"
         Me.dgvBefo.RowHeadersVisible = False
@@ -61,19 +67,10 @@ Partial Class FrmMain
         Me.dgvBefo.Size = New System.Drawing.Size(531, 617)
         Me.dgvBefo.TabIndex = 1
         '
-        'DataGridView2
-        '
-        Me.DataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.DataGridView2.Location = New System.Drawing.Point(725, 82)
-        Me.DataGridView2.Name = "DataGridView2"
-        Me.DataGridView2.RowTemplate.Height = 21
-        Me.DataGridView2.Size = New System.Drawing.Size(527, 617)
-        Me.DataGridView2.TabIndex = 2
-        '
         'btnConv
         '
         Me.btnConv.Font = New System.Drawing.Font("MS UI Gothic", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
-        Me.btnConv.Location = New System.Drawing.Point(553, 183)
+        Me.btnConv.Location = New System.Drawing.Point(553, 176)
         Me.btnConv.Name = "btnConv"
         Me.btnConv.Size = New System.Drawing.Size(157, 85)
         Me.btnConv.TabIndex = 3
@@ -83,13 +80,13 @@ Partial Class FrmMain
         'btnFolderSelect
         '
         Me.btnFolderSelect.BackColor = System.Drawing.Color.Aqua
-        Me.btnFolderSelect.Font = New System.Drawing.Font("MS UI Gothic", 14.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        Me.btnFolderSelect.Font = New System.Drawing.Font("MS UI Gothic", 15.75!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
         Me.btnFolderSelect.ForeColor = System.Drawing.SystemColors.ControlText
         Me.btnFolderSelect.Location = New System.Drawing.Point(12, 43)
         Me.btnFolderSelect.Name = "btnFolderSelect"
         Me.btnFolderSelect.Size = New System.Drawing.Size(130, 33)
         Me.btnFolderSelect.TabIndex = 5
-        Me.btnFolderSelect.Text = "①フォルダ選択"
+        Me.btnFolderSelect.Text = "フォルダ選択"
         Me.btnFolderSelect.UseVisualStyleBackColor = False
         '
         'lblFilePath
@@ -123,7 +120,7 @@ Partial Class FrmMain
         'Label1
         '
         Me.Label1.Font = New System.Drawing.Font("MS UI Gothic", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
-        Me.Label1.Location = New System.Drawing.Point(549, 95)
+        Me.Label1.Location = New System.Drawing.Point(549, 88)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(123, 23)
         Me.Label1.TabIndex = 9
@@ -132,27 +129,18 @@ Partial Class FrmMain
         'lblCnt
         '
         Me.lblCnt.Font = New System.Drawing.Font("MS UI Gothic", 27.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
-        Me.lblCnt.Location = New System.Drawing.Point(593, 118)
+        Me.lblCnt.Location = New System.Drawing.Point(593, 111)
         Me.lblCnt.Name = "lblCnt"
         Me.lblCnt.Size = New System.Drawing.Size(117, 48)
         Me.lblCnt.TabIndex = 10
-        '
-        'Label2
-        '
-        Me.Label2.Font = New System.Drawing.Font("MS UI Gothic", 15.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
-        Me.Label2.ForeColor = System.Drawing.SystemColors.ControlText
-        Me.Label2.Location = New System.Drawing.Point(721, 56)
-        Me.Label2.Name = "Label2"
-        Me.Label2.Size = New System.Drawing.Size(125, 23)
-        Me.Label2.TabIndex = 11
-        Me.Label2.Text = "<出力結果>"
+        Me.lblCnt.Text = "0件"
+        Me.lblCnt.TextAlign = System.Drawing.ContentAlignment.MiddleLeft
         '
         'FrmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 12.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1264, 711)
-        Me.Controls.Add(Me.Label2)
+        Me.ClientSize = New System.Drawing.Size(721, 711)
         Me.Controls.Add(Me.lblCnt)
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnAllCancel)
@@ -160,7 +148,6 @@ Partial Class FrmMain
         Me.Controls.Add(Me.lblFilePath)
         Me.Controls.Add(Me.btnFolderSelect)
         Me.Controls.Add(Me.btnConv)
-        Me.Controls.Add(Me.DataGridView2)
         Me.Controls.Add(Me.dgvBefo)
         Me.Controls.Add(Me.lblTitle)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
@@ -169,7 +156,6 @@ Partial Class FrmMain
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "給与明細変換システム"
         CType(Me.dgvBefo, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.DataGridView2, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -177,7 +163,6 @@ Partial Class FrmMain
 
     Friend WithEvents lblTitle As Label
     Friend WithEvents dgvBefo As DataGridView
-    Friend WithEvents DataGridView2 As DataGridView
     Friend WithEvents btnConv As Button
     Friend WithEvents btnFolderSelect As Button
     Friend WithEvents lblFilePath As Label
@@ -185,5 +170,4 @@ Partial Class FrmMain
     Friend WithEvents btnAllCancel As Button
     Friend WithEvents Label1 As Label
     Friend WithEvents lblCnt As Label
-    Friend WithEvents Label2 As Label
 End Class

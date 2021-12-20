@@ -3,11 +3,13 @@ Imports WK.Libraries.BetterFolderBrowserNS
 
 Public Class FrmMain
 
-
 #Region "共有変数"
-    Private INPUTPath As String
-    Private OUTPUTPath As String
+    Dim INPUTPath As String
+    Dim OUTPUTPath As String
+    Private jud As Boolean
 #End Region
+
+#Region "Form関連"
     'コンストラクタ
     Sub New()
 
@@ -17,7 +19,7 @@ Public Class FrmMain
         ' InitializeComponent() 呼び出しの後で初期化を追加します。        
 
     End Sub
-#Region "Form関連"
+
     Private Sub FrmLoad(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
 
@@ -46,18 +48,49 @@ Public Class FrmMain
                 'インスタンス生成
                 Dim INI As New RWini(strPath)
 
-
                 'フォルダ選択のRoot設定
                 INPUTPath = INI.GetIniString("ROOTFOLDER", "INPUTPATH")
                 OUTPUTPath = INI.GetIniString("ROOTFOLDER", "OUTPUTPATH")
+
+                '表示
+                lblFilePath.Text = INPUTPath
+
             End If
+
+            '変換元,変換先フォルダ
+            If System.IO.Directory.Exists(INPUTPath) <> True Then
+                MsgBox($"変換元フォルダ""{INPUTPath}""が見つかりません。",, "エラー")
+                INPUTPath = ""
+
+                '表示
+                lblFilePath.Text = INPUTPath
+
+            ElseIf System.IO.Directory.Exists(OUTPUTPath) <> True Then
+                MsgBox($"変換先フォルダ""{INPUTPath}""が見つかりません。" & vbCrLf & "プログラムを終了します。",, "エラー")
+                OUTPUTPath = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+
+                Application.Exit()
+
+            Else
+                Call FunSetListData(Me.dgvBefo, INPUTPath)
+                dgvBefo.CurrentCell = Nothing
+            End If
+
 
         Catch ex As Exception
             MsgBox(ex.Message)
         End Try
 
     End Sub
+
+    Private Sub Form_Click(sender As Object, e As EventArgs) Handles MyBase.Click
+
+        Call cellNumCnt()
+
+    End Sub
 #End Region
+
+#Region "FolderBrowser"
 
     Private Function btnFolderSelect_Click(sender As Object, e As EventArgs) Handles btnFolderSelect.Click
 
@@ -65,11 +98,6 @@ Public Class FrmMain
 
             Dim bfb As New BetterFolderBrowser()
             Dim filePath As String()
-
-            If System.IO.File.Exists(INPUTPath) <> True Then
-                MsgBox($"{INPUTPath}が見つかりません。" & vbCrLf & "デスクトップフォルダを開きます。",, "エラー")
-                INPUTPath = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
-            End If
 
             bfb.Title = "変換したいフォルダを選択してください。"
             bfb.Multiselect = False
@@ -87,12 +115,13 @@ Public Class FrmMain
             'TextBoxへ指定したディレクトリが存在するかのチェック
             For Each fp As String In filePath
                 If Not Directory.Exists(fp) Then
-                    MsgBox($"指定のディレクトリ{fp}は存在しません。" & vbCrLf & "確認してください。")
+                    MsgBox($"指定のフォルダ""{fp}""は存在しません。" & vbCrLf & "確認してください。")
                 Else
                     Call FunSetListData(Me.dgvBefo, fp)
                 End If
             Next
 
+            Return True
 
         Catch ex As Exception
             MsgBox(ex.Message)
@@ -101,6 +130,8 @@ Public Class FrmMain
 
 
     End Function
+
+#End Region
 
 #Region "DataGridView関連"
     'DataGridView列作成
@@ -205,6 +236,10 @@ Public Class FrmMain
                 dgv(0, i).Value = True
             Next i
 
+            Call cellNumCnt()
+
+            dgvBefo.CurrentCell = Nothing
+
             Return True
 
         Catch ex As Exception
@@ -227,6 +262,10 @@ Public Class FrmMain
                 dgv(0, i).Value = False
             Next i
 
+            Call cellNumCnt()
+
+            dgvBefo.CurrentCell = Nothing
+
             Return True
 
         Catch ex As Exception
@@ -237,6 +276,20 @@ Public Class FrmMain
     End Function
 
     Private Sub cellChanged(sender As Object, e As EventArgs) Handles dgvBefo.CurrentCellDirtyStateChanged
+
+        Try
+
+            Call cellNumCnt()
+            dgvBefo.CurrentCell = dgvBefo(1, dgvBefo.CurrentRow.Index)
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+
+    End Sub
+
+    'データ数を表示
+    Public Function cellNumCnt() As Integer
         Dim dgvRowCnt As Integer
         Dim cnt As Integer
 
@@ -253,12 +306,15 @@ Public Class FrmMain
             Next i
 
             lblCnt.Text = cnt.ToString + "件"
-            'dgvBefo.CurrentCell = dgvBefo(, 1)
+
+            Return cnt
 
         Catch ex As Exception
             MsgBox(ex.Message)
+            Return 0
         End Try
-    End Sub
+
+    End Function
 
     '全選択ボタン押下
     Private Sub btnAllChk_Click(sender As Object, e As EventArgs) Handles btnAllChk.Click

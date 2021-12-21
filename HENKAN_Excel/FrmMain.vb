@@ -6,6 +6,7 @@ Public Class FrmMain
 #Region "共有変数"
     Dim INPUTPath As String
     Dim OUTPUTPath As String
+    Dim SheetNM As String
     Private jud As Boolean
 #End Region
 
@@ -50,7 +51,9 @@ Public Class FrmMain
 
                 'フォルダ選択のRoot設定
                 INPUTPath = INI.GetIniString("ROOTFOLDER", "INPUTPATH")
-                OUTPUTPath = INI.GetIniString("ROOTFOLDER", "OUTPUTPATH")
+                OUTPUTPath = INI.GetINIString("ROOTFOLDER", "OUTPUTPATH")
+
+                SheetNM = INI.GetINIString("EXCEL", "SHEETNM")
 
                 '表示
                 lblFilePath.Text = INPUTPath
@@ -89,16 +92,40 @@ Public Class FrmMain
 
     End Sub
 
+    ''' <summary>
+    ''' 変換ボタンクリック
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
     Private Sub btnConv_Click(sender As Object, e As EventArgs) Handles btnConv.Click
 
-        If lblFilePath.Text = "" Or Directory.Exists(lblFilePath.Text) = False Then
-            Exit Sub
-        End If
-        If cellNumCnt() <= 0 Then
-            MsgBox("処理できるファイルはありません。",, "処理数エラー")
-            Exit Sub
-        End If
+        Try
+            If lblFilePath.Text = "" Then
+                MsgBox("フォルダを指定してください。",, "処理エラー")
+                Exit Sub
+            End If
+            If Directory.Exists(lblFilePath.Text) = False Then
+                MsgBox("このフォルダは処理できません。",, "処理エラー")
+                Exit Sub
+            End If
+            If cellNumCnt() <= 0 Then
+                MsgBox("処理できるファイルはありません。",, "処理数エラー")
+                Exit Sub
+            End If
 
+            Dim tmp As New Excel_Processing(OUTPUTPath, SheetNM, dgvBefo)
+            If tmp.Start_pro() Then
+                Dim rc As MsgBoxResult
+                rc = MsgBox("処理を続行しますか？", vbYesNo + vbQuestion)
+                If rc = vbYes Then
+
+                Else
+                    Application.Exit()
+                End If
+            End If
+        Catch ex As Exception
+
+        End Try
 
     End Sub
 
@@ -176,6 +203,13 @@ Public Class FrmMain
                 .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
                 .Columns(.ColumnCount - 1).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
 
+                'ファイルパス列作成
+                .Columns.Add("filePath", "ファイルパス")
+                .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+                .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
+                .Columns(.ColumnCount - 1).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                .Columns(2).Visible = False
+
                 '読み取り専用
                 .Columns(1).ReadOnly = True
 
@@ -204,6 +238,7 @@ Public Class FrmMain
             Dim files As String()
 
             dt.Columns.Add("fileName")
+            dt.Columns.Add("filePath")
 
             files = Directory.GetFiles(filePath)
 
@@ -214,9 +249,9 @@ Public Class FrmMain
                 'Excelファイルのみ表示
                 If (fi.Extension Like ".xl*") Then
                     dr("fileName") = fi.Name
+                    dr("filePath") = filePath & "\" & fi.Name
                     dt.Rows.Add(dr)
                 End If
-
             Next
 
             'データソース設定

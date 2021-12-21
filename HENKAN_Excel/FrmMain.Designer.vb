@@ -22,7 +22,7 @@ Partial Class FrmMain
     'コード エディターを使って変更しないでください。
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Dim DataGridViewCellStyle1 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As System.Windows.Forms.DataGridViewCellStyle = New System.Windows.Forms.DataGridViewCellStyle()
         Me.lblTitle = New System.Windows.Forms.Label()
         Me.dgvBefo = New System.Windows.Forms.DataGridView()
         Me.btnConv = New System.Windows.Forms.Button()
@@ -53,14 +53,14 @@ Partial Class FrmMain
         Me.dgvBefo.AllowUserToResizeColumns = False
         Me.dgvBefo.AllowUserToResizeRows = False
         Me.dgvBefo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        DataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window
-        DataGridViewCellStyle1.Font = New System.Drawing.Font("MS UI Gothic", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
-        DataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Transparent
-        DataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.ControlText
-        DataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
-        Me.dgvBefo.DefaultCellStyle = DataGridViewCellStyle1
+        DataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+        DataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window
+        DataGridViewCellStyle2.Font = New System.Drawing.Font("MS UI Gothic", 9.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
+        DataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Transparent
+        DataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.ControlText
+        DataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.[False]
+        Me.dgvBefo.DefaultCellStyle = DataGridViewCellStyle2
         Me.dgvBefo.Location = New System.Drawing.Point(20, 123)
         Me.dgvBefo.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
         Me.dgvBefo.Name = "dgvBefo"
@@ -72,6 +72,7 @@ Partial Class FrmMain
         '
         'btnConv
         '
+        Me.btnConv.BackColor = System.Drawing.Color.Yellow
         Me.btnConv.Font = New System.Drawing.Font("MS UI Gothic", 18.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(128, Byte))
         Me.btnConv.Location = New System.Drawing.Point(922, 264)
         Me.btnConv.Margin = New System.Windows.Forms.Padding(5, 4, 5, 4)
@@ -79,7 +80,7 @@ Partial Class FrmMain
         Me.btnConv.Size = New System.Drawing.Size(262, 128)
         Me.btnConv.TabIndex = 3
         Me.btnConv.Text = "変換"
-        Me.btnConv.UseVisualStyleBackColor = True
+        Me.btnConv.UseVisualStyleBackColor = False
         '
         'btnFolderSelect
         '

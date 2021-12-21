@@ -6,13 +6,28 @@ Public Class Excel_Processing
     Private strOutputfp As String
     Private strSheetNM As String
     Private intCnt As Integer
+    Private dgv As DataGridView
 
 
-    Sub New(Inputfp As String, Outputfp As String, sheetnm As String)
-        strInputfp = Inputfp
+    Sub New(Outputfp As String, sheetNM As String, dgv As DataGridView)
         strOutputfp = Outputfp
-        strSheetNM = sheetnm
+        strSheetNM = sheetNM
+        Me.dgv = dgv
         intCnt = FrmMain.cellNumCnt()
     End Sub
+
+    Public Function Start_pro() As Boolean
+        Try
+            For Each row As DataGridViewRow In dgv.Rows
+                If row.Cells.Item(0).Value = True Then
+
+                End If
+            Next
+            Return True
+        Catch ex As Exception
+            Return False
+        End Try
+
+    End Function
 
 End Class

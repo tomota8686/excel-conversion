@@ -64,18 +64,18 @@ Public Class FrmMain
 
                 '表示
                 lblFilePath.Text = INPUTPath
+            End If
 
-            ElseIf System.IO.Directory.Exists(OUTPUTPath) <> True Then
-                MsgBox($"変換先フォルダ""{INPUTPath}""が見つかりません。" & vbCrLf & "プログラムを終了します。",, "エラー")
+            If System.IO.Directory.Exists(OUTPUTPath) <> True Then
+                MsgBox($"変換先フォルダ""{OUTPUTPath}""が見つかりません。" & vbCrLf & "プログラムを終了します。",, "エラー")
                 OUTPUTPath = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
 
                 Application.Exit()
 
-            Else
+            ElseIf System.IO.Directory.Exists(INPUTPath) = True Then
                 Call FunSetListData(Me.dgvBefo, INPUTPath)
                 dgvBefo.CurrentCell = Nothing
             End If
-
 
         Catch ex As Exception
             MsgBox(ex.Message)
@@ -88,6 +88,20 @@ Public Class FrmMain
         Call cellNumCnt()
 
     End Sub
+
+    Private Sub btnConv_Click(sender As Object, e As EventArgs) Handles btnConv.Click
+
+        If lblFilePath.Text = "" Or Directory.Exists(lblFilePath.Text) = False Then
+            Exit Sub
+        End If
+        If cellNumCnt() <= 0 Then
+            MsgBox("処理できるファイルはありません。",, "処理数エラー")
+            Exit Sub
+        End If
+
+
+    End Sub
+
 #End Region
 
 #Region "FolderBrowser"
@@ -115,7 +129,7 @@ Public Class FrmMain
             'TextBoxへ指定したディレクトリが存在するかのチェック
             For Each fp As String In filePath
                 If Not Directory.Exists(fp) Then
-                    MsgBox($"指定のフォルダ""{fp}""は存在しません。" & vbCrLf & "確認してください。")
+                    MsgBox($"指定のフォルダ""{fp}""は存在しません。" & vbCrLf & "確認してください。",, "エラー")
                 Else
                     Call FunSetListData(Me.dgvBefo, fp)
                 End If

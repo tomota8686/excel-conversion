@@ -36,7 +36,7 @@ Public Class FrmMain
 
             'INI読取
             'SYSTEM.INIの存在するフォルダ
-            Dim strPath As String = Application.StartupPath.Replace("EXE", "INI") + "\SYSTEM.INI"
+            Dim strPath As String = Application.StartupPath.Replace("EXE_DEBUG", "INI") + "\SYSTEM.INI"
 
             '<System.IO.FileNotFoundExceptionでも記述できる>
             'SYSTEM.INIが見つからない場合
@@ -116,11 +116,10 @@ Public Class FrmMain
             Dim tmp As New Excel_Processing(OUTPUTPath, SheetNM, dgvBefo)
             If tmp.Start_pro() Then
                 Dim rc As MsgBoxResult
-                rc = MsgBox("処理を続行しますか？", vbYesNo + vbQuestion)
+                rc = MsgBox(Str(cellNumCnt()) + "件処理します。", vbYesNo + vbQuestion)
                 If rc = vbYes Then
-
                 Else
-                    Application.Exit()
+                    Exit Sub
                 End If
             End If
         Catch ex As Exception

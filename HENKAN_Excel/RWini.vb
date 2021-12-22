@@ -28,7 +28,7 @@ Public Class RWini
 
     '----------------------------------------------------------------------------------
     'iniファイルから取得する
-    Public Function GetIniString(ByVal lpSection As String, ByVal lpKeyName As String) As String
+    Public Function GetINIString(ByVal lpSection As String, ByVal lpKeyName As String) As String
         Dim strValue As System.Text.StringBuilder = New System.Text.StringBuilder(1024)
 
         Dim sLen = GetPrivateProfileString(lpSection, lpKeyName, "", strValue, 1024, lpFileName)
@@ -39,7 +39,7 @@ Public Class RWini
 
     '----------------------------------------------------------------------------------
     'iniファイルに書き込む
-    Public Function PutIniString(ByVal lpSection As String, lpKeyName As String, ByVal lpValue As String) As Boolean
+    Public Function PutINIString(ByVal lpSection As String, lpKeyName As String, ByVal lpValue As String) As Boolean
         Dim result As Long = WritePrivateProfileString(lpSection, lpKeyName, lpValue, lpFileName)
         Return result <> 0
     End Function

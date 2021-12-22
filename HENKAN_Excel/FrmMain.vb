@@ -3,11 +3,14 @@ Imports WK.Libraries.BetterFolderBrowserNS
 
 Public Class FrmMain
 
-
 #Region "共有変数"
-    Private INPUTPath As String
-    Private OUTPUTPath As String
+    Dim INPUTPath As String
+    Dim OUTPUTPath As String
+    Dim SheetNM As String
+    Private jud As Boolean
 #End Region
+
+#Region "Form関連"
     'コンストラクタ
     Sub New()
 
@@ -17,7 +20,7 @@ Public Class FrmMain
         ' InitializeComponent() 呼び出しの後で初期化を追加します。        
 
     End Sub
-#Region "Form関連"
+
     Private Sub FrmLoad(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
 
@@ -38,28 +41,97 @@ Public Class FrmMain
             '<System.IO.FileNotFoundExceptionでも記述できる>
             'SYSTEM.INIが見つからない場合
             If System.IO.File.Exists(strPath) <> True Then
-                MsgBox("SYSTEM.INIが見つかりません。" & vbCrLf & "プログラムを終了します。",, "エラー")
-                Try
-                Finally
-                    Application.Exit()
-                End Try
+                MsgBox("SYSTEM.INIが見つかりません。" & vbCrLf & "デフォルトにデスクトップPathを指定します。",, "エラー")
+                'フォルダ選択のRoot設定
+                INPUTPath = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+                OUTPUTPath = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+            Else
+                'インスタンス生成
+                Dim INI As New RWini(strPath)
+
+                'フォルダ選択のRoot設定
+                INPUTPath = INI.GetIniString("ROOTFOLDER", "INPUTPATH")
+                OUTPUTPath = INI.GetINIString("ROOTFOLDER", "OUTPUTPATH")
+
+                SheetNM = INI.GetINIString("EXCEL", "SHEETNM")
+
+                '表示
+                lblFilePath.Text = INPUTPath
+
             End If
 
-            'インスタンス生成
-            Dim INI As New RWini(strPath)
+            '変換元,変換先フォルダ
+            If System.IO.Directory.Exists(INPUTPath) <> True Then
+                MsgBox($"変換元フォルダ""{INPUTPath}""が見つかりません。",, "エラー")
+                INPUTPath = ""
 
+                '表示
+                lblFilePath.Text = INPUTPath
+            End If
 
-            'フォルダ選択のRoot設定
-            INPUTPath = INI.GetIniString("ROOTFOLDER", "INPUTPATH")
-            OUTPUTPath = INI.GetIniString("ROOTFOLDER", "OUTPUTPATH")
+            If System.IO.Directory.Exists(OUTPUTPath) <> True Then
+                MsgBox($"変換先フォルダ""{OUTPUTPath}""が見つかりません。" & vbCrLf & "プログラムを終了します。",, "エラー")
+                OUTPUTPath = System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
 
+                Application.Exit()
+
+            ElseIf System.IO.Directory.Exists(INPUTPath) = True Then
+                Call FunSetListData(Me.dgvBefo, INPUTPath)
+                dgvBefo.CurrentCell = Nothing
+            End If
 
         Catch ex As Exception
             MsgBox(ex.Message)
         End Try
 
     End Sub
+
+    Private Sub Form_Click(sender As Object, e As EventArgs) Handles MyBase.Click
+
+        Call cellNumCnt()
+
+    End Sub
+
+    ''' <summary>
+    ''' 変換ボタンクリック
+    ''' </summary>
+    ''' <param name="sender"></param>
+    ''' <param name="e"></param>
+    Private Sub btnConv_Click(sender As Object, e As EventArgs) Handles btnConv.Click
+
+        Try
+            If lblFilePath.Text = "" Then
+                MsgBox("フォルダを指定してください。",, "処理エラー")
+                Exit Sub
+            End If
+            If Directory.Exists(lblFilePath.Text) = False Then
+                MsgBox("このフォルダは処理できません。",, "処理エラー")
+                Exit Sub
+            End If
+            If cellNumCnt() <= 0 Then
+                MsgBox("処理できるファイルはありません。",, "処理数エラー")
+                Exit Sub
+            End If
+
+            Dim tmp As New Excel_Processing(OUTPUTPath, SheetNM, dgvBefo)
+            If tmp.Start_pro() Then
+                Dim rc As MsgBoxResult
+                rc = MsgBox("処理を続行しますか？", vbYesNo + vbQuestion)
+                If rc = vbYes Then
+
+                Else
+                    Application.Exit()
+                End If
+            End If
+        Catch ex As Exception
+
+        End Try
+
+    End Sub
+
 #End Region
+
+#Region "FolderBrowser"
 
     Private Function btnFolderSelect_Click(sender As Object, e As EventArgs) Handles btnFolderSelect.Click
 
@@ -84,12 +156,13 @@ Public Class FrmMain
             'TextBoxへ指定したディレクトリが存在するかのチェック
             For Each fp As String In filePath
                 If Not Directory.Exists(fp) Then
-                    MsgBox($"指定のディレクトリ{fp}は存在しません。" & vbCrLf & "確認してください。")
+                    MsgBox($"指定のフォルダ""{fp}""は存在しません。" & vbCrLf & "確認してください。",, "エラー")
                 Else
                     Call FunSetListData(Me.dgvBefo, fp)
                 End If
             Next
 
+            Return True
 
         Catch ex As Exception
             MsgBox(ex.Message)
@@ -99,45 +172,62 @@ Public Class FrmMain
 
     End Function
 
+#End Region
+
 #Region "DataGridView関連"
     'DataGridView列作成
     Private Function FunSetDgvCulumns(dgv As DataGridView) As Boolean
 
-        With dgv
+        Try
+            With dgv
 
-            .EnableHeadersVisualStyles = False
-            .ColumnHeadersHeight = 40
-            .ColumnHeadersDefaultCellStyle.BackColor = Color.Gray
-            .ColumnHeadersHeightSizeMode = False
-            .RowHeadersWidthSizeMode = False
-            .RowTemplate.Height = 30
+                .EnableHeadersVisualStyles = False
+                .ColumnHeadersHeight = 40
+                .ColumnHeadersDefaultCellStyle.BackColor = Color.Gray
+                .ColumnHeadersHeightSizeMode = False
+                .RowHeadersWidthSizeMode = False
+                .RowTemplate.Height = 30
 
-            Dim checkBox As New DataGridViewCheckBoxColumn
+                Dim checkBox As New DataGridViewCheckBoxColumn
 
-            'CheckBox列作成
-            .Columns.Add(checkBox)
-            .Columns(0).HeaderText = "選択"
-            .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-            .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
-            .Columns(.ColumnCount - 1).Width = 40
+                'CheckBox列作成
+                .Columns.Add(checkBox)
+                .Columns(0).HeaderText = "選択"
+                .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+                .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
+                .Columns(.ColumnCount - 1).Width = 40
 
-            'ファイル名列作成
-            .Columns.Add("fileName", "ファイル名")
-            .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
-            .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
-            .Columns(.ColumnCount - 1).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                'ファイル名列作成
+                .Columns.Add("fileName", "ファイル名")
+                .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+                .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
+                .Columns(.ColumnCount - 1).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
 
-            '読み取り専用
-            .Columns(1).ReadOnly = True
+                'ファイルパス列作成
+                .Columns.Add("filePath", "ファイルパス")
+                .Columns(.ColumnCount - 1).DefaultCellStyle.Alignment = Windows.Forms.DataGridViewContentAlignment.MiddleLeft
+                .Columns(.ColumnCount - 1).DataPropertyName = .Columns(.ColumnCount - 1).Name
+                .Columns(.ColumnCount - 1).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                .Columns(2).Visible = False
 
-            .Columns(0).AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells
+                '読み取り専用
+                .Columns(1).ReadOnly = True
 
-            'ソート禁止
-            For Each c As DataGridViewColumn In dgv.Columns
-                c.SortMode = DataGridViewColumnSortMode.NotSortable
-            Next c
+                .Columns(0).AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells
 
-        End With
+                'ソート禁止
+                For Each c As DataGridViewColumn In dgv.Columns
+                    c.SortMode = DataGridViewColumnSortMode.NotSortable
+                Next c
+
+            End With
+
+            Return True
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+            Return False
+        End Try
 
     End Function
 
@@ -148,6 +238,7 @@ Public Class FrmMain
             Dim files As String()
 
             dt.Columns.Add("fileName")
+            dt.Columns.Add("filePath")
 
             files = Directory.GetFiles(filePath)
 
@@ -158,9 +249,9 @@ Public Class FrmMain
                 'Excelファイルのみ表示
                 If (fi.Extension Like ".xl*") Then
                     dr("fileName") = fi.Name
+                    dr("filePath") = filePath & "\" & fi.Name
                     dt.Rows.Add(dr)
                 End If
-
             Next
 
             'データソース設定
@@ -194,6 +285,10 @@ Public Class FrmMain
                 dgv(0, i).Value = True
             Next i
 
+            Call cellNumCnt()
+
+            dgvBefo.CurrentCell = Nothing
+
             Return True
 
         Catch ex As Exception
@@ -203,6 +298,7 @@ Public Class FrmMain
 
     End Function
 
+    'すべてのChkBox選択解除
     Private Function FunDgvCellAllCan(dgv As DataGridView) As Boolean
 
         Dim dgvRowCnt As Integer
@@ -215,6 +311,10 @@ Public Class FrmMain
                 dgv(0, i).Value = False
             Next i
 
+            Call cellNumCnt()
+
+            dgvBefo.CurrentCell = Nothing
+
             Return True
 
         Catch ex As Exception
@@ -224,7 +324,21 @@ Public Class FrmMain
 
     End Function
 
-    Private Sub cellChanged(sender As Object, e As EventArgs) Handles dgvBefo.CellValueChanged
+    Private Sub cellChanged(sender As Object, e As EventArgs) Handles dgvBefo.CurrentCellDirtyStateChanged
+
+        Try
+
+            Call cellNumCnt()
+            dgvBefo.CurrentCell = dgvBefo(1, dgvBefo.CurrentRow.Index)
+
+        Catch ex As Exception
+            MsgBox(ex.Message)
+        End Try
+
+    End Sub
+
+    'データ数を表示
+    Public Function cellNumCnt() As Integer
         Dim dgvRowCnt As Integer
         Dim cnt As Integer
 
@@ -242,10 +356,14 @@ Public Class FrmMain
 
             lblCnt.Text = cnt.ToString + "件"
 
+            Return cnt
+
         Catch ex As Exception
             MsgBox(ex.Message)
+            Return 0
         End Try
-    End Sub
+
+    End Function
 
     '全選択ボタン押下
     Private Sub btnAllChk_Click(sender As Object, e As EventArgs) Handles btnAllChk.Click

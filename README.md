@@ -2,7 +2,7 @@
 
 ## 開発環境
 .NET Framework 4.7
--SQL Server 2016-
+--SQL Server 2016--
 
 ## :computer: プログラム実装タスク
 :pencil2: メインプログラムの実装タスク作成は[こちら][pgrep]から

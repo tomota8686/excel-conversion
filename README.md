@@ -1,7 +1,7 @@
-# conversion
+# excel-conversion
 
 ## プログラム名
-HENKAN_Excel
+excel-conversion
 
 ## プログラム内容
 Excelファイルをシステムに取り込める形に変換するプログラム
